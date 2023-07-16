@@ -14,7 +14,6 @@ import {
   userType,
   repoCacheType,
   userReposType,
-  repoType,
 } from "../global";
 
 function Icon({ id, open }: { id: number; open: number }) {
