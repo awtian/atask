@@ -19,7 +19,9 @@ type getRepoResponse = {
   data: repoType;
 };
 
-type repoListType = repoType[];
+type repoCacheType = userReposType[];
+
+type userReposType = repoType[];
 
 type repoType = {
   name: string;
@@ -46,21 +48,21 @@ function Icon({ id, open }: { id: number; open: number }) {
 
 export default function UserList({ users }: { users: UserList }) {
   const [open, setOpen] = useState(-1);
-  const [repoList, setRepoList] = useState<repoListType>([]);
+  const [repoCache, setRepoCache] = useState<repoCacheType>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleOpen = async (value: number): Promise<void> => {
     setOpen(open === value ? -1 : value);
-    if (users && value > -1 && !repoList[value]) {
+    if (users && value > -1 && !repoCache[value]) {
       try {
         setIsLoading(true);
-        const resp = await axios.get<{ data: repoType[] }>(
+        const resp = await axios.get<{ data: userReposType }>(
           users[value].repos_url
         );
-        const userRepo = resp.data;
-        const newRepoList: repoListType = repoList;
-        newRepoList[value] = userRepo;
-        setRepoList(newRepoList);
+        const userRepos = resp.data;
+        const newRepoCache: repoCacheType = repoCache;
+        newRepoCache[value] = userRepos;
+        setRepoCache(newRepoCache);
       } catch (error) {
         console.log(error);
       } finally {
@@ -74,7 +76,11 @@ export default function UserList({ users }: { users: UserList }) {
       {users &&
         users.map((each, i) => {
           return (
-            <Accordion open={open === i} icon={<Icon id={i} open={open} />}>
+            <Accordion
+              key={`user-${i}}`}
+              open={open === i}
+              icon={<Icon id={i} open={open} />}
+            >
               <AccordionHeader onClick={() => void handleOpen(i)}>
                 {each.login}
               </AccordionHeader>
@@ -84,8 +90,8 @@ export default function UserList({ users }: { users: UserList }) {
                     <Spinner className="h-12 w-12" />
                   </div>
                 ) : (
-                  repoList[i] &&
-                  repoList[i].map((each, idx) => (
+                  repoCache[i] &&
+                  repoCache[i].map((each, idx) => (
                     <UserRepo
                       key={`repo-${idx}`}
                       title={each.name}
