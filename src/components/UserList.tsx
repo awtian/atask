@@ -14,6 +14,7 @@ import {
   userType,
   repoCacheType,
   userReposType,
+  repoType,
 } from "../global";
 
 function Icon({ id, open }: { id: number; open: number }) {
@@ -43,14 +44,14 @@ export default function UserList({ users }: { users: userListType }) {
     if (users && value > -1 && !repoCache[value]) {
       try {
         setIsLoading(true);
-        const resp = await axios.get<{ data: userReposType }>(
+        const resp: { data: userReposType } = await axios.get(
           users[value].repos_url
         );
         const userRepos = resp.data;
         const newRepoCache = repoCache.slice(0);
         newRepoCache[value] = userRepos;
         setRepoCache(newRepoCache);
-      } catch (e) {
+      } catch (error) {
         alert("something went wrong with the github api");
       } finally {
         setIsLoading(false);
