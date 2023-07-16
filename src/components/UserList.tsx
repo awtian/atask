@@ -27,7 +27,7 @@ function Icon({ id, open }: { id: number; open: number }) {
 export default function UserList() {
   const [open, setOpen] = useState(1);
 
-  const handleOpen = (value: number) => {
+  const handleOpen = (value: number): void => {
     setOpen(open === value ? 0 : value);
   };
 

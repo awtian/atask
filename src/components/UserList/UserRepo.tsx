@@ -1,10 +1,12 @@
 import { Card, CardBody, Typography } from "@material-tailwind/react";
 
-export default function UserRepo(props: {
+type UserRepoProps = {
   title: string;
   description: string;
   stars: number;
-}) {
+};
+
+export default function UserRepo(props: UserRepoProps) {
   return (
     <Card className="w-full border-gray-100 border-solid border text-left">
       <CardBody>
