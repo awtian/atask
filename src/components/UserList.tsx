@@ -5,29 +5,17 @@ import {
   AccordionBody,
   Spinner,
 } from "@material-tailwind/react";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 
 import UserRepo from "./UserList/UserRepo";
-type User = {
-  login: string;
-  repos_url: string;
-};
 
-type UserList = User[] | undefined;
-
-type getRepoResponse = {
-  data: repoType;
-};
-
-type repoCacheType = userReposType[];
-
-type userReposType = repoType[];
-
-type repoType = {
-  name: string;
-  description: string;
-  stargazers_count: number;
-};
+import {
+  userListType,
+  userType,
+  repoCacheType,
+  userReposType,
+  repoType,
+} from "../global";
 
 function Icon({ id, open }: { id: number; open: number }) {
   return (
@@ -46,7 +34,7 @@ function Icon({ id, open }: { id: number; open: number }) {
   );
 }
 
-export default function UserList({ users }: { users: UserList }) {
+export default function UserList({ users }: { users: userListType }) {
   const [open, setOpen] = useState(-1);
   const [repoCache, setRepoCache] = useState<repoCacheType>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -60,7 +48,7 @@ export default function UserList({ users }: { users: UserList }) {
           users[value].repos_url
         );
         const userRepos = resp.data;
-        const newRepoCache: repoCacheType = repoCache;
+        const newRepoCache = repoCache.slice(0);
         newRepoCache[value] = userRepos;
         setRepoCache(newRepoCache);
       } catch (error) {
@@ -74,7 +62,7 @@ export default function UserList({ users }: { users: UserList }) {
   return (
     <Fragment>
       {users &&
-        users.map((each, i) => {
+        users.map((each: userType, i: number) => {
           return (
             <Accordion
               key={`user-${i}}`}

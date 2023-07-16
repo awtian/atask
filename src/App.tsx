@@ -4,30 +4,18 @@ import { Button, Input, Spinner } from "@material-tailwind/react";
 import UserList from "./components/UserList";
 import { Fragment, useState } from "react";
 import axios from "axios";
-
-type User = {
-  login: string;
-  repos_url: string;
-};
-
-type UserList = User[] | undefined;
-
-type getUsersResponse = {
-  data: {
-    items: UserList;
-  };
-};
+import { userListType, getUsersResponseType } from "./global";
 
 function App() {
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [searchResult, setSearchResult] = useState<UserList>();
+  const [searchResult, setSearchResult] = useState<userListType>();
   const [lastSearch, setLastSearch] = useState("");
 
   const searchData = async () => {
     try {
       setIsLoading(true);
-      const { data }: getUsersResponse = await axios.get(
+      const { data }: getUsersResponseType = await axios.get(
         `https://api.github.com/search/users?q=${search}`
       );
       setSearchResult(data.items);
