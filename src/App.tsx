@@ -18,7 +18,7 @@ function App() {
       const { data }: getUsersResponseType = await axios.get(
         `https://api.github.com/search/users?q=${search}`
       );
-      setSearchResult(data.items);
+      setSearchResult(data.items?.slice(0, 5));
       setLastSearch(search);
     } catch (e) {
       alert("something went wrong with the github api");
