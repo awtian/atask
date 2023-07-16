@@ -8,7 +8,7 @@ type UserRepoProps = {
 
 export default function UserRepo(props: UserRepoProps) {
   return (
-    <Card className="w-full border-gray-100 border-solid border text-left">
+    <Card className="w-full border-gray-100 border-solid border text-left my-2 h-36">
       <CardBody>
         <div className="flex justify-between">
           <Typography variant="h5" color="blue-gray" className="mb-2">
@@ -34,7 +34,9 @@ export default function UserRepo(props: UserRepoProps) {
             </svg>
           </Typography>
         </div>
-        <Typography>{props.description}</Typography>
+        <Typography className="text-sm overflow-y-auto">
+          {props.description}
+        </Typography>
       </CardBody>
     </Card>
   );

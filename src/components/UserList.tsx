@@ -3,9 +3,29 @@ import {
   Accordion,
   AccordionHeader,
   AccordionBody,
+  Spinner,
 } from "@material-tailwind/react";
+import axios, { AxiosResponse } from "axios";
 
 import UserRepo from "./UserList/UserRepo";
+type User = {
+  login: string;
+  repos_url: string;
+};
+
+type UserList = User[] | undefined;
+
+type getRepoResponse = {
+  data: repoType;
+};
+
+type repoListType = repoType[];
+
+type repoType = {
+  name: string;
+  description: string;
+  stargazers_count: number;
+};
 
 function Icon({ id, open }: { id: number; open: number }) {
   return (
@@ -24,39 +44,60 @@ function Icon({ id, open }: { id: number; open: number }) {
   );
 }
 
-export default function UserList() {
-  const [open, setOpen] = useState(1);
+export default function UserList({ users }: { users: UserList }) {
+  const [open, setOpen] = useState(-1);
+  const [repoList, setRepoList] = useState<repoListType>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleOpen = (value: number): void => {
-    setOpen(open === value ? 0 : value);
+  const handleOpen = async (value: number): Promise<void> => {
+    setOpen(open === value ? -1 : value);
+    if (users && value > -1 && !repoList[value]) {
+      try {
+        setIsLoading(true);
+        const resp = await axios.get<{ data: repoType[] }>(
+          users[value].repos_url
+        );
+        const userRepo = resp.data;
+        const newRepoList: repoListType = repoList;
+        newRepoList[value] = userRepo;
+        setRepoList(newRepoList);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
   };
 
   return (
     <Fragment>
-      <Accordion open={open === 1} icon={<Icon id={1} open={open} />}>
-        <AccordionHeader onClick={() => handleOpen(1)}>User1</AccordionHeader>
-        <AccordionBody>
-          <UserRepo title="repo title" description="lorem ipsum" stars={3} />
-        </AccordionBody>
-      </Accordion>
-      <Accordion open={open === 2} icon={<Icon id={2} open={open} />}>
-        <AccordionHeader onClick={() => handleOpen(2)}>User2</AccordionHeader>
-        <AccordionBody>
-          We&apos;re not always in the position that we want to be at.
-          We&apos;re constantly growing. We&apos;re constantly making mistakes.
-          We&apos;re constantly trying to express ourselves and actualize our
-          dreams.
-        </AccordionBody>
-      </Accordion>
-      <Accordion open={open === 3} icon={<Icon id={3} open={open} />}>
-        <AccordionHeader onClick={() => handleOpen(3)}>User3</AccordionHeader>
-        <AccordionBody>
-          We&apos;re not always in the position that we want to be at.
-          We&apos;re constantly growing. We&apos;re constantly making mistakes.
-          We&apos;re constantly trying to express ourselves and actualize our
-          dreams.
-        </AccordionBody>
-      </Accordion>
+      {users &&
+        users.map((each, i) => {
+          return (
+            <Accordion open={open === i} icon={<Icon id={i} open={open} />}>
+              <AccordionHeader onClick={() => void handleOpen(i)}>
+                {each.login}
+              </AccordionHeader>
+              <AccordionBody>
+                {isLoading ? (
+                  <div className="w-full flex justify-center mt-4">
+                    <Spinner className="h-12 w-12" />
+                  </div>
+                ) : (
+                  repoList[i] &&
+                  repoList[i].map((each, idx) => (
+                    <UserRepo
+                      key={`repo-${idx}`}
+                      title={each.name}
+                      description={each.description}
+                      stars={each.stargazers_count}
+                    />
+                  ))
+                )}
+              </AccordionBody>
+            </Accordion>
+          );
+        })}
     </Fragment>
   );
 }
