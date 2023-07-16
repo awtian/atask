@@ -14,7 +14,6 @@ import {
   userType,
   repoCacheType,
   userReposType,
-  repoType,
 } from "../global";
 
 function Icon({ id, open }: { id: number; open: number }) {
@@ -51,8 +50,8 @@ export default function UserList({ users }: { users: userListType }) {
         const newRepoCache = repoCache.slice(0);
         newRepoCache[value] = userRepos;
         setRepoCache(newRepoCache);
-      } catch (error) {
-        console.log(error);
+      } catch (e) {
+        alert("something went wrong with the github api");
       } finally {
         setIsLoading(false);
       }
@@ -78,15 +77,16 @@ export default function UserList({ users }: { users: userListType }) {
                     <Spinner className="h-12 w-12" />
                   </div>
                 ) : (
-                  repoCache[i] &&
-                  repoCache[i].map((each, idx) => (
-                    <UserRepo
-                      key={`repo-${idx}`}
-                      title={each.name}
-                      description={each.description}
-                      stars={each.stargazers_count}
-                    />
-                  ))
+                  (repoCache[i] &&
+                    repoCache[i].map((each, idx) => (
+                      <UserRepo
+                        key={`repo-${idx}`}
+                        title={each.name}
+                        description={each.description}
+                        stars={each.stargazers_count}
+                      />
+                    ))) ||
+                  ""
                 )}
               </AccordionBody>
             </Accordion>

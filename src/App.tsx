@@ -21,7 +21,7 @@ function App() {
       setSearchResult(data.items);
       setLastSearch(search);
     } catch (e) {
-      console.log(e);
+      alert("something went wrong with the github api");
     } finally {
       setIsLoading(false);
     }

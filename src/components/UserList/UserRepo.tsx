@@ -12,14 +12,14 @@ export default function UserRepo(props: UserRepoProps) {
       <CardBody>
         <div className="flex justify-between">
           <Typography variant="h5" color="blue-gray" className="mb-2">
-            {props.title}
+            {props.title || ""}
           </Typography>
           <Typography
             variant="h5"
             color="blue-gray"
             className="mb-2 flex items-center"
           >
-            {props.stars}
+            {props.stars.toString() || ""}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -35,7 +35,7 @@ export default function UserRepo(props: UserRepoProps) {
           </Typography>
         </div>
         <Typography className="text-sm overflow-y-auto">
-          {props.description}
+          {props.description || ""}
         </Typography>
       </CardBody>
     </Card>
